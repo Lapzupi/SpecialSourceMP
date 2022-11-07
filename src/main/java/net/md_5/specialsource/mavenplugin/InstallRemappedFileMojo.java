@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 the original author or authors
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,7 +64,7 @@ public class InstallRemappedFileMojo extends AbstractMojo {
     @Component
     protected ArtifactInstaller installer;
 
-    @Parameter( property = "localRepository", required = true, readonly = true )
+    @Parameter(property = "localRepository", required = true, readonly = true)
     protected ArtifactRepository localRepository;
 
     /**
@@ -72,50 +72,50 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      *
      * @since 2.2
      */
-    @Parameter( property = "createChecksum", defaultValue = "false" )
+    @Parameter(property = "createChecksum", defaultValue = "false")
     protected boolean createChecksum;
 
     /**
      * Whether to update the metadata to make the artifact a release version.
      */
-    @Parameter( property = "updateReleaseInfo", defaultValue = "false" )
+    @Parameter(property = "updateReleaseInfo", defaultValue = "false")
     protected boolean updateReleaseInfo;
 
     /**
      * Digester for MD5.
      */
-    @Component( hint = "md5" )
+    @Component(hint = "md5")
     protected Digester md5Digester;
 
     /**
      * Digester for SHA-1.
      */
-    @Component( hint = "sha1" )
+    @Component(hint = "sha1")
     protected Digester sha1Digester;
 
 
     /**
      * GroupId of the artifact to be installed.
      */
-    @Parameter( property = "groupId", required = true )
+    @Parameter(property = "groupId", required = true)
     protected String groupId;
 
     /**
      * ArtifactId of the artifact to be installed.
      */
-    @Parameter( property = "artifactId", required = true )
+    @Parameter(property = "artifactId", required = true)
     protected String artifactId;
 
     /**
      * Version of the artifact to be installed.
      */
-    @Parameter( property = "version", required = true )
+    @Parameter(property = "version", required = true)
     protected String version;
 
     /**
      * Packaging type of the artifact to be installed.
      */
-    @Parameter( property = "packaging", defaultValue = "jar" )
+    @Parameter(property = "packaging", defaultValue = "jar")
     protected String packaging;
 
     /**
@@ -123,33 +123,33 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      * means this is the project's main artifact.
      *
      */
-    @Parameter( property = "classifier" )
+    @Parameter(property = "classifier")
     protected String classifier;
 
     /**
      * The input jar(s) to be remapped and installed. May be remote URLs.
      */
-    @Parameter( property = "in-jars", required = true )
+    @Parameter(property = "in-jars", required = true)
     private String[] inJars;
 
     /**
      * The bundled API docs for the artifact.
      *
      */
-    @Parameter( property = "javadoc" )
+    @Parameter(property = "javadoc")
     private File javadoc;
 
     /**
      * The bundled sources for the artifact.
      *
      */
-    @Parameter( property = "sources" )
+    @Parameter(property = "sources")
     private File sources;
 
     /**
      * Mapping input file and options
      */
-    @Parameter( required = true )
+    @Parameter(required = true)
     private String srgIn;
     @Parameter
     private boolean reverse;
@@ -170,28 +170,28 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      * Output options
      */
 
-    @Parameter ( defaultValue =  "false" )
+    @Parameter(defaultValue = "false")
     private boolean replaceMainArtifact;
 
-    @Parameter( defaultValue = "${project.build.directory}" )
+    @Parameter(defaultValue = "${project.build.directory}")
     private File outputDirectory;
 
-    @Parameter ( defaultValue = "false" )
+    @Parameter(defaultValue = "false")
     private boolean attachArtifact;
 
-    @Parameter ( defaultValue =  "jar" )
+    @Parameter(defaultValue = "jar")
     private String attachArtifactType;
 
-    @Parameter ( defaultValue = "" )
+    @Parameter(defaultValue = "")
     private String attachArtifactClassifier;
 
-    @Parameter ( defaultValue = "true" )
+    @Parameter(defaultValue = "true")
     private boolean installArtifact;
 
     /**
      * Map that contains the repository layouts.
      */
-    @Component( role = ArtifactRepositoryLayout.class )
+    @Component(role = ArtifactRepositoryLayout.class)
     private Map repositoryLayouts;
 
     /**
@@ -214,11 +214,11 @@ public class InstallRemappedFileMojo extends AbstractMojo {
         validateArtifactInformation();
 
         Artifact artifact =
-                artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
+                artifactFactory.createArtifactWithClassifier(groupId, artifactId, version, packaging, classifier);
 
         File existingFile = getLocalRepoFile(artifact);
         if (existingFile != null && existingFile.exists()) {
-            System.out.println("Using cached remapped artifact "+ existingFile.getPath()); // delete file to reinstall
+            System.out.println("Using cached remapped artifact " + existingFile.getPath()); // delete file to reinstall
             return; // success
         }
 
@@ -266,7 +266,7 @@ public class InstallRemappedFileMojo extends AbstractMojo {
             remapper.remapJar(inJar, outJar);
         } catch (Exception ex) {
             ex.printStackTrace();
-            throw new MojoExecutionException("Error creating remapped jar at "+outJar+": " + ex.getMessage(), ex);
+            throw new MojoExecutionException("Error creating remapped jar at " + outJar + ": " + ex.getMessage(), ex);
         }
 
         // Replace main artifact with this remapped artifact
@@ -275,7 +275,7 @@ public class InstallRemappedFileMojo extends AbstractMojo {
             File originalArtifact = project.getArtifact().getFile();
             originalArtifact.delete();
             if (!outJar.renameTo(originalArtifact)) {
-                throw new MojoExecutionException("Error replacing remapped jar at "+originalArtifact+" with "+outJar);
+                throw new MojoExecutionException("Error replacing remapped jar at " + originalArtifact + " with " + outJar);
             }
         }
 
@@ -298,20 +298,16 @@ public class InstallRemappedFileMojo extends AbstractMojo {
     private void installArtifact(Artifact artifact, File outJar) throws MojoExecutionException {
         // Install POM
         File generatedPomFile = generatePomFile();
-        ArtifactMetadata pomMetadata = new ProjectArtifactMetadata( artifact, generatedPomFile );
-        if ( !getLocalRepoFile( pomMetadata ).exists() )
-        {
-            getLog().debug( "Installing generated POM" );
-            artifact.addMetadata( pomMetadata );
-        }
-        else
-        {
-            getLog().debug( "Skipping installation of generated POM, already present in local repository" );
+        ArtifactMetadata pomMetadata = new ProjectArtifactMetadata(artifact, generatedPomFile);
+        if (!getLocalRepoFile(pomMetadata).exists()) {
+            getLog().debug("Installing generated POM");
+            artifact.addMetadata(pomMetadata);
+        } else {
+            getLog().debug("Skipping installation of generated POM, already present in local repository");
         }
 
-        if ( updateReleaseInfo )
-        {
-            artifact.setRelease( true );
+        if (updateReleaseInfo) {
+            artifact.setRelease(true);
         }
 
 
@@ -319,53 +315,39 @@ public class InstallRemappedFileMojo extends AbstractMojo {
 
         Collection metadataFiles = new LinkedHashSet();
 
-        try
-        {
-            installer.install( outJar, artifact, localRepository );
-            installChecksums( artifact, metadataFiles );
-        }
-        catch ( ArtifactInstallationException e )
-        {
+        try {
+            installer.install(outJar, artifact, localRepository);
+            installChecksums(artifact, metadataFiles);
+        } catch (ArtifactInstallationException e) {
             throw new MojoExecutionException(
-                    "Error installing artifact '" + artifact.getDependencyConflictId() + "' at "+outJar+": " + e.getMessage(), e );
-        }
-        finally
-        {
-            if ( generatedPomFile != null )
-            {
+                    "Error installing artifact '" + artifact.getDependencyConflictId() + "' at " + outJar + ": " + e.getMessage(), e);
+        } finally {
+            if (generatedPomFile != null) {
                 generatedPomFile.delete();
             }
         }
 
-        if ( sources != null )
-        {
-            artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "sources" );
-            try
-            {
-                installer.install( sources, artifact, localRepository );
-                installChecksums( artifact, metadataFiles );
-            }
-            catch ( ArtifactInstallationException e )
-            {
-                throw new MojoExecutionException( "Error installing sources " + sources + ": " + e.getMessage(), e );
+        if (sources != null) {
+            artifact = artifactFactory.createArtifactWithClassifier(groupId, artifactId, version, "jar", "sources");
+            try {
+                installer.install(sources, artifact, localRepository);
+                installChecksums(artifact, metadataFiles);
+            } catch (ArtifactInstallationException e) {
+                throw new MojoExecutionException("Error installing sources " + sources + ": " + e.getMessage(), e);
             }
         }
 
-        if ( javadoc != null )
-        {
-            artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "javadoc" );
-            try
-            {
-                installer.install( javadoc, artifact, localRepository );
-                installChecksums( artifact, metadataFiles );
-            }
-            catch ( ArtifactInstallationException e )
-            {
-                throw new MojoExecutionException( "Error installing API docs " + javadoc + ": " + e.getMessage(), e );
+        if (javadoc != null) {
+            artifact = artifactFactory.createArtifactWithClassifier(groupId, artifactId, version, "jar", "javadoc");
+            try {
+                installer.install(javadoc, artifact, localRepository);
+                installChecksums(artifact, metadataFiles);
+            } catch (ArtifactInstallationException e) {
+                throw new MojoExecutionException("Error installing API docs " + javadoc + ": " + e.getMessage(), e);
             }
         }
 
-        installChecksums( metadataFiles );
+        installChecksums(metadataFiles);
 
         // Remove temporary file after it has been installed
         outJar.delete();
@@ -400,16 +382,14 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      * @throws MojoExecutionException If any artifact coordinate is invalid.
      */
     private void validateArtifactInformation()
-            throws MojoExecutionException
-    {
+            throws MojoExecutionException {
         Model model = generateModel();
 
-        ModelValidationResult result = modelValidator.validate( model );
+        ModelValidationResult result = modelValidator.validate(model);
 
-        if ( result.getMessageCount() > 0 )
-        {
+        if (result.getMessageCount() > 0) {
             throw new MojoExecutionException(
-                    "The artifact information is incomplete or not valid:\n" + result.render( "  " ) );
+                    "The artifact information is incomplete or not valid:\n" + result.render("  "));
         }
     }
 
@@ -419,18 +399,17 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      *
      * @return The generated model, never <code>null</code>.
      */
-    private Model generateModel()
-    {
+    private Model generateModel() {
         Model model = new Model();
 
-        model.setModelVersion( "4.0.0" );
+        model.setModelVersion("4.0.0");
 
-        model.setGroupId( groupId );
-        model.setArtifactId( artifactId );
-        model.setVersion( version );
-        model.setPackaging( packaging );
+        model.setGroupId(groupId);
+        model.setArtifactId(artifactId);
+        model.setVersion(version);
+        model.setPackaging(packaging);
 
-        model.setDescription( "POM was created from specialsource-maven-plugin" );
+        model.setDescription("POM was created from specialsource-maven-plugin");
 
         return model;
     }
@@ -443,26 +422,20 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      * @throws MojoExecutionException If the POM file could not be generated.
      */
     private File generatePomFile()
-            throws MojoExecutionException
-    {
+            throws MojoExecutionException {
         Model model = generateModel();
 
         Writer writer = null;
-        try
-        {
-            File pomFile = File.createTempFile( "mvninstall", ".pom" );
+        try {
+            File pomFile = File.createTempFile("mvninstall", ".pom");
 
             writer = WriterFactory.newXmlWriter(pomFile);
-            new MavenXpp3Writer().write( writer, model );
+            new MavenXpp3Writer().write(writer, model);
 
             return pomFile;
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error writing temporary POM file: " + e.getMessage(), e );
-        }
-        finally
-        {
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error writing temporary POM file: " + e.getMessage(), e);
+        } finally {
             IOUtil.close(writer);
         }
     }
@@ -476,10 +449,9 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      * @param artifact The artifact whose local repo path should be determined, must not be <code>null</code>.
      * @return The absolute path to the artifact when installed, never <code>null</code>.
      */
-    protected File getLocalRepoFile( Artifact artifact )
-    {
-        String path = localRepository.pathOf( artifact );
-        return new File( localRepository.getBasedir(), path );
+    protected File getLocalRepoFile(Artifact artifact) {
+        String path = localRepository.pathOf(artifact);
+        return new File(localRepository.getBasedir(), path);
     }
 
     /**
@@ -489,10 +461,9 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      * @param metadata The artifact metadata whose local repo path should be determined, must not be <code>null</code>.
      * @return The absolute path to the artifact metadata when installed, never <code>null</code>.
      */
-    protected File getLocalRepoFile( ArtifactMetadata metadata )
-    {
-        String path = localRepository.pathOfLocalRepositoryMetadata( metadata, localRepository );
-        return new File( localRepository.getBasedir(), path );
+    protected File getLocalRepoFile(ArtifactMetadata metadata) {
+        String path = localRepository.pathOfLocalRepositoryMetadata(metadata, localRepository);
+        return new File(localRepository.getBasedir(), path);
     }
 
     /**
@@ -507,25 +478,21 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      *            must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
-    protected void installChecksums( Artifact artifact, Collection metadataFiles )
-            throws MojoExecutionException
-    {
-        if ( !createChecksum )
-        {
+    protected void installChecksums(Artifact artifact, Collection metadataFiles)
+            throws MojoExecutionException {
+        if (!createChecksum) {
             return;
         }
 
-        File artifactFile = getLocalRepoFile( artifact );
-        installChecksums( artifactFile );
+        File artifactFile = getLocalRepoFile(artifact);
+        installChecksums(artifactFile);
 
         Collection metadatas = artifact.getMetadataList();
-        if ( metadatas != null )
-        {
-            for ( Iterator it = metadatas.iterator(); it.hasNext(); )
-            {
+        if (metadatas != null) {
+            for (Iterator it = metadatas.iterator(); it.hasNext(); ) {
                 ArtifactMetadata metadata = (ArtifactMetadata) it.next();
-                File metadataFile = getLocalRepoFile( metadata );
-                metadataFiles.add( metadataFile );
+                File metadataFile = getLocalRepoFile(metadata);
+                metadataFiles.add(metadataFile);
             }
         }
     }
@@ -536,13 +503,11 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      * @param metadataFiles The collection of metadata files to install checksums for, must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
-    protected void installChecksums( Collection metadataFiles )
-            throws MojoExecutionException
-    {
-        for ( Iterator it = metadataFiles.iterator(); it.hasNext(); )
-        {
+    protected void installChecksums(Collection metadataFiles)
+            throws MojoExecutionException {
+        for (Iterator it = metadataFiles.iterator(); it.hasNext(); ) {
             File metadataFile = (File) it.next();
-            installChecksums( metadataFile );
+            installChecksums(metadataFile);
         }
     }
 
@@ -553,14 +518,12 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      *            must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
-    private void installChecksums( File installedFile )
-            throws MojoExecutionException
-    {
-        boolean signatureFile = installedFile.getName().endsWith( ".asc" );
-        if ( installedFile.isFile() && !signatureFile )
-        {
-            installChecksum( installedFile, installedFile, md5Digester, ".md5" );
-            installChecksum( installedFile, installedFile, sha1Digester, ".sha1" );
+    private void installChecksums(File installedFile)
+            throws MojoExecutionException {
+        boolean signatureFile = installedFile.getName().endsWith(".asc");
+        if (installedFile.isFile() && !signatureFile) {
+            installChecksum(installedFile, installedFile, md5Digester, ".md5");
+            installChecksum(installedFile, installedFile, sha1Digester, ".sha1");
         }
     }
 
@@ -575,31 +538,24 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      *            <code>null</code>.
      * @throws MojoExecutionException If the checksum could not be installed.
      */
-    private void installChecksum( File originalFile, File installedFile, Digester digester, String ext )
-            throws MojoExecutionException
-    {
+    private void installChecksum(File originalFile, File installedFile, Digester digester, String ext)
+            throws MojoExecutionException {
         String checksum;
-        getLog().debug( "Calculating " + digester.getAlgorithm() + " checksum for " + originalFile );
-        try
-        {
-            checksum = digester.calc( originalFile );
-        }
-        catch ( DigesterException e )
-        {
-            throw new MojoExecutionException( "Failed to calculate " + digester.getAlgorithm() + " checksum for "
-                    + originalFile, e );
+        getLog().debug("Calculating " + digester.getAlgorithm() + " checksum for " + originalFile);
+        try {
+            checksum = digester.calc(originalFile);
+        } catch (DigesterException e) {
+            throw new MojoExecutionException("Failed to calculate " + digester.getAlgorithm() + " checksum for "
+                    + originalFile, e);
         }
 
-        File checksumFile = new File( installedFile.getAbsolutePath() + ext );
-        getLog().debug( "Installing checksum to " + checksumFile );
-        try
-        {
+        File checksumFile = new File(installedFile.getAbsolutePath() + ext);
+        getLog().debug("Installing checksum to " + checksumFile);
+        try {
             checksumFile.getParentFile().mkdirs();
-            FileUtils.fileWrite( checksumFile.getAbsolutePath(), "UTF-8", checksum );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to install checksum to " + checksumFile, e );
+            FileUtils.fileWrite(checksumFile.getAbsolutePath(), "UTF-8", checksum);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to install checksum to " + checksumFile, e);
         }
     }
 }
