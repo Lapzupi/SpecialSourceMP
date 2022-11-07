@@ -10,7 +10,7 @@
 
     <groupId>net.md-5</groupId>
     <artifactId>specialsource-maven-plugin</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <packaging>maven-plugin</packaging>
     <name>SpecialSourceMP</name>
 
@@ -106,6 +106,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

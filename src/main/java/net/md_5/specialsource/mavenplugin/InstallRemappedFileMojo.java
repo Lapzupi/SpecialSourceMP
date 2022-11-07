@@ -52,7 +52,7 @@ import java.util.*;
 
 /**
  * Install remapped dependencies
- *
+ * <p>
  * Based on maven-install-plugin
  */
 @Mojo(name = "install-remapped-file", defaultPhase = LifecyclePhase.INITIALIZE)

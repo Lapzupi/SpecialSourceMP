@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 the original author or authors
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ import java.util.List;
 
 /**
  * Create a remapped version of the main project artifact
- *
+ * <p>
  * Based on maven-shade-plugin
  */
 @Mojo(name = "remap", defaultPhase = LifecyclePhase.PACKAGE)
@@ -69,16 +69,16 @@ public class RemapMojo extends AbstractMojo {
     @Component
     private ArtifactFactory artifactFactory;
 
-    @Parameter( property = "localRepository", required = true, readonly = true )
+    @Parameter(property = "localRepository", required = true, readonly = true)
     private ArtifactRepository localRepository;
 
-    @Parameter( defaultValue = "${project.remoteArtifactRepositories}" )
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}")
     private List<ArtifactRepository> remoteRepositories;
 
-   /**
+    /**
      * The destination directory for the shaded artifact.
      */
-    @Parameter( defaultValue = "${project.build.directory}" )
+    @Parameter(defaultValue = "${project.build.directory}")
     private File outputDirectory;
 
     /**
@@ -97,7 +97,7 @@ public class RemapMojo extends AbstractMojo {
      * be something like foo-1.0.jar. So if you change the artifactId you might have something
      * like foo-special-1.0.jar.
      */
-    @Parameter( defaultValue = "${project.artifactId}" )
+    @Parameter(defaultValue = "${project.artifactId}")
     private String remappedArtifactId;
 
     /**
@@ -111,13 +111,13 @@ public class RemapMojo extends AbstractMojo {
     /**
      * The name of the classifier used in case the remapped artifact is attached.
      */
-    @Parameter( defaultValue = "remapped" )
+    @Parameter(defaultValue = "remapped")
     private String remappedClassifierName;
 
     /**
      * Mapping input file and options
      */
-    @Parameter( required = true )
+    @Parameter(required = true)
     private String srgIn;
     @Parameter
     private File accessIn;
@@ -139,7 +139,7 @@ public class RemapMojo extends AbstractMojo {
     private String[] remappedDependencies = new String[0];
     @Parameter
     private String[] excludedPackages;
-    @Parameter( defaultValue = "true" )
+    @Parameter(defaultValue = "true")
     private boolean useProjectDependencies;
 
     private File resolveArtifact(String artifactString) throws ArtifactResolutionException, ArtifactNotFoundException, MojoExecutionException {
@@ -147,7 +147,11 @@ public class RemapMojo extends AbstractMojo {
         if (array.length != 4 && array.length != 5) {
             throw new MojoExecutionException("Invalid artifact dependency name, must be groupId:artifactId:version:type:classifier " + artifactString + " in " + array.length);
         }
-        String groupId = array[0], artifactId = array[1], version = array[2], type = array[3], classifier = array.length > 4 ? array[4] : null;
+        String groupId = array[0];
+        String artifactId = array[1];
+        String version = array[2];
+        String type = array[3];
+        String classifier = array.length > 4 ? array[4] : null;
         return resolveArtifact(groupId, artifactId, version, type, classifier);
     }
 
@@ -160,22 +164,22 @@ public class RemapMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (project.getArtifact().getFile() == null || !project.getArtifact().getFile().isFile()) {
             if (project.getGroupId().equals("net.md-5") && project.getName().equals("ForgeMod")) {
-                System.out.println("Ignoring no main project artifact for ForgeMod parent project");
+                getLog().warn("Ignoring no main project artifact for ForgeMod parent project");
                 return;
             }
             // message borrowed from maven-shade-plugin
-            getLog().error( "The project main artifact does not exist. This could have the following" );
-            getLog().error( "reasons:" );
-            getLog().error( "- You have invoked the goal directly from the command line. This is not" );
-            getLog().error( "  supported. Please add the goal to the default lifecycle via an" );
-            getLog().error( "  <execution> element in your POM and use \"mvn package\" to have it run." );
-            getLog().error( "- You have bound the goal to a lifecycle phase before \"package\". Please" );
-            getLog().error( "  remove this binding from your POM such that the goal will be run in" );
-            getLog().error( "  the proper phase." );
+            getLog().error("The project main artifact does not exist. This could have the following");
+            getLog().error("reasons:");
+            getLog().error("- You have invoked the goal directly from the command line. This is not");
+            getLog().error("  supported. Please add the goal to the default lifecycle via an");
+            getLog().error("  <execution> element in your POM and use \"mvn package\" to have it run.");
+            getLog().error("- You have bound the goal to a lifecycle phase before \"package\". Please");
+            getLog().error("  remove this binding from your POM such that the goal will be run in");
+            getLog().error("  the proper phase.");
             getLog().error(
-                    "- You removed the configuration of the maven-jar-plugin that produces the main artifact." );
+                    "- You removed the configuration of the maven-jar-plugin that produces the main artifact.");
             throw new MojoExecutionException(
-                    "Failed to create remapped artifact, " + "project main artifact does not exist." );
+                    "Failed to create remapped artifact, " + "project main artifact does not exist.");
         }
 
         if (inputFile == null) {
@@ -202,7 +206,7 @@ public class RemapMojo extends AbstractMojo {
             JointProvider inheritanceProviders = new JointProvider();
             for (String artifactString : remappedDependencies) {
                 File dependencyFile = resolveArtifact(artifactString);
-                System.out.println("Adding inheritance "+dependencyFile.getPath());
+                getLog().info("Adding inheritance " + dependencyFile.getPath());
                 inheritanceProviders.add(new JarProvider(Jar.init(dependencyFile)));
             }
             if (useProjectDependencies) {
@@ -210,7 +214,7 @@ public class RemapMojo extends AbstractMojo {
                     if (!dependency.getType().equals("jar")) continue;
 
                     File dependencyFile = resolveArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), dependency.getType(), dependency.getClassifier());
-                    System.out.println("Adding inheritance "+dependencyFile.getPath());
+                    getLog().info("Adding inheritance " + dependencyFile.getPath());
                     inheritanceProviders.add(new JarProvider(Jar.init(dependencyFile)));
                 }
             }
@@ -238,23 +242,22 @@ public class RemapMojo extends AbstractMojo {
             // rename the output file if a specific finalName is set
             // but don't rename if the finalName is the <build><finalName>
             // because this will be handled implicitly later
-            if ( finalName != null && finalName.length() > 0 && !finalName.equals(
-                    project.getBuild().getFinalName() ) )
-            {
+            if (finalName != null && finalName.length() > 0 && !finalName.equals(
+                    project.getBuild().getFinalName())) {
                 String finalFileName = finalName + "." + project.getArtifact().getArtifactHandler().getExtension();
-                File finalFile = new File( outputDirectory, finalFileName );
-                replaceFile( finalFile, outputFile );
+                File finalFile = new File(outputDirectory, finalFileName);
+                replaceFile(finalFile, outputFile);
                 renamed = true;
             }
 
             if (remappedArtifactAttached) {
                 getLog().info("Attaching remapped artifact.");
-                projectHelper.attachArtifact( project, project.getArtifact().getType(), remappedClassifierName,
+                projectHelper.attachArtifact(project, project.getArtifact().getType(), remappedClassifierName,
                         outputFile);
             } else if (!renamed) {
                 getLog().info("Replacing original artifact with remapped artifact.");
                 File originalArtifact = project.getArtifact().getFile();
-                replaceFile( originalArtifact, outputFile);
+                replaceFile(originalArtifact, outputFile);
             }
 
 
@@ -270,73 +273,50 @@ public class RemapMojo extends AbstractMojo {
         Artifact artifact = project.getArtifact();
         final String shadedName = remappedArtifactId + "-" + artifact.getVersion() + "-" + remappedClassifierName + "."
                 + artifact.getArtifactHandler().getExtension();
-        return new File( outputDirectory, shadedName );
+        return new File(outputDirectory, shadedName);
     }
 
-    private void replaceFile( File oldFile, File newFile )
-            throws MojoExecutionException
-    {
-        getLog().info( "Replacing " + oldFile + " with " + newFile );
+    private void replaceFile(File oldFile, File newFile)
+            throws MojoExecutionException {
+        getLog().info("Replacing " + oldFile + " with " + newFile);
 
-        File origFile = new File( outputDirectory, "original-" + oldFile.getName() );
-        if ( oldFile.exists() && !oldFile.renameTo( origFile ) )
-        {
+        File origFile = new File(outputDirectory, "original-" + oldFile.getName());
+        if (oldFile.exists() && !oldFile.renameTo(origFile)) {
             //try a gc to see if an unclosed stream needs garbage collecting
-            System.gc();
-            System.gc();
+            gc();
 
-            if ( !oldFile.renameTo( origFile ) )
-            {
+            if (!oldFile.renameTo(origFile)) {
                 // Still didn't work.   We'll do a copy
-                try
-                {
-                    FileOutputStream fout = new FileOutputStream( origFile );
-                    FileInputStream fin = new FileInputStream( oldFile );
-                    try
-                    {
+                try (FileOutputStream fout = new FileOutputStream(origFile)) {
+                    try (FileInputStream fin = new FileInputStream(oldFile)) {
                         IOUtil.copy(fin, fout);
                     }
-                    finally
-                    {
-                        IOUtil.close( fin );
-                        IOUtil.close( fout );
-                    }
-                }
-                catch ( IOException ex )
-                {
+                } catch (IOException ex) {
                     //kind of ignorable here.   We're just trying to save the original
-                    getLog().warn( ex );
+                    getLog().warn(ex);
                 }
             }
         }
-        if ( !newFile.renameTo( oldFile ) )
-        {
+        if (!newFile.renameTo(oldFile)) {
             //try a gc to see if an unclosed stream needs garbage collecting
-            System.gc();
-            System.gc();
+            gc();
 
-            if ( !newFile.renameTo( oldFile ) )
-            {
+            if (!newFile.renameTo(oldFile)) {
                 // Still didn't work.   We'll do a copy
-                try
-                {
-                    FileOutputStream fout = new FileOutputStream( oldFile );
-                    FileInputStream fin = new FileInputStream( newFile );
-                    try
-                    {
-                        IOUtil.copy( fin, fout );
+                try (FileOutputStream fout = new FileOutputStream(oldFile)) {
+                    try (FileInputStream fin = new FileInputStream(newFile)) {
+                        IOUtil.copy(fin, fout);
                     }
-                    finally
-                    {
-                        IOUtil.close( fin );
-                        IOUtil.close( fout );
-                    }
-                }
-                catch ( IOException ex )
-                {
-                    throw new MojoExecutionException( "Could not replace original artifact with remapped artifact!", ex );
+                } catch (IOException ex) {
+                    throw new MojoExecutionException("Could not replace original artifact with remapped artifact!", ex);
                 }
             }
         }
     }
+
+    private void gc(){
+        System.gc();
+        System.gc();
+    }
+
 }
