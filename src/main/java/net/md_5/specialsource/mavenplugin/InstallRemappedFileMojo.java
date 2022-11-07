@@ -487,10 +487,9 @@ public class InstallRemappedFileMojo extends AbstractMojo {
         File artifactFile = getLocalRepoFile(artifact);
         installChecksums(artifactFile);
 
-        Collection metadatas = artifact.getMetadataList();
+        Collection<ArtifactMetadata> metadatas = artifact.getMetadataList();
         if (metadatas != null) {
-            for (Iterator it = metadatas.iterator(); it.hasNext(); ) {
-                ArtifactMetadata metadata = (ArtifactMetadata) it.next();
+            for (final ArtifactMetadata metadata : metadatas) {
                 File metadataFile = getLocalRepoFile(metadata);
                 metadataFiles.add(metadataFile);
             }
@@ -505,8 +504,8 @@ public class InstallRemappedFileMojo extends AbstractMojo {
      */
     protected void installChecksums(Collection metadataFiles)
             throws MojoExecutionException {
-        for (Iterator it = metadataFiles.iterator(); it.hasNext(); ) {
-            File metadataFile = (File) it.next();
+        for (final Object file : metadataFiles) {
+            File metadataFile = (File) file;
             installChecksums(metadataFile);
         }
     }
