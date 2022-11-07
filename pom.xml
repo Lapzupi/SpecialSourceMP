@@ -26,8 +26,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mavenPluginVersion>3.5</mavenPluginVersion>
-        <mavenVersion>3.0</mavenVersion>
+        <mavenPluginVersion>3.6.4</mavenPluginVersion>
+        <mavenVersion>3.8.5</mavenVersion>
     </properties>
 
     <dependencies>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-digest</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
         </dependency>
     </dependencies>
     <build>
